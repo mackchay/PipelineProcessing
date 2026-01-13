@@ -1,0 +1,22 @@
+{
+  "dataType": "Document",
+  "channels": [
+    {"id": "c1"},
+    {"id": "c2"},
+    {"id": "c3"}
+  ],
+  "nodes": [
+    {
+      "id": "normalize",
+      "type": "NormalizeNode",
+      "inputs": ["c1"],
+      "outputs": ["c2"]
+    },
+    {
+      "id": "split",
+      "type": "SplitNode",
+      "inputs": ["c2"],
+      "outputs": ["c3"]
+    }
+  ]
+}
