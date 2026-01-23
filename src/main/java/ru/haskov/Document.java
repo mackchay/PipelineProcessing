@@ -1,25 +1,34 @@
 package ru.haskov;
 
+import java.io.Serializable;
 import java.util.*;
 
-public final class Document {
-    private final String format;
+public final class Document implements Serializable {
+    private final long sequenceId;
+    private final long mergeGroupId;
+    private final String type;
     private final String content;
     private final List<String> history;
 
-    public Document(String format, String content, List<String> history) {
-        this.format = format;
+    public Document(long sequenceId, long mergeGroupId, String type, String content, List<String> history) {
+        this.sequenceId = sequenceId;
+        this.mergeGroupId = mergeGroupId;
+        this.type = type;
         this.content = content;
-        this.history = List.copyOf(history);
+        this.history = new ArrayList<>(history);
     }
 
-    public Document withStep(String step, String newContent) {
-        List<String> h = new ArrayList<>(history);
-        h.add(step);
-        return new Document(format, newContent, h);
-    }
-
-    public String format() { return format; }
+    public long sequenceId() { return sequenceId; }
+    public long mergeGroupId() { return mergeGroupId; }
+    public String type() { return type; }
     public String content() { return content; }
     public List<String> history() { return history; }
+
+    public Document withHistory(String step) {
+        List<String> newHistory = new ArrayList<>(history);
+        newHistory.add(step);
+        return new Document(sequenceId, mergeGroupId, type, content, newHistory);
+    }
 }
+
+

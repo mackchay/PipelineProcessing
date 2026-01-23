@@ -1,4 +1,6 @@
-package ru.haskov;
+package ru.haskov.nodes;
+
+import ru.haskov.Document;
 
 import java.util.Comparator;
 import java.util.List;

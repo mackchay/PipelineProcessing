@@ -1,43 +1,33 @@
 package ru.haskov;
 
+import java.io.ObjectOutputStream;
+import java.net.Socket;
 import java.net.URI;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.List;
 import java.util.Objects;
 
-public final class Main {
-
+public class Main {
     public static void main(String[] args) throws Exception {
 
-        String json = readResource();
-        Pipeline pipeline = PipelineLoader.load(json);
+        String json = Files.readString(
+                Path.of(Objects.requireNonNull(Main.class.getResource("/schema.json")).toURI())
+        );
 
-        Channel<Document> input = pipeline.getChannel("c1");
-        Channel<Document> output = pipeline.getChannel("c3");
+        List<NodeServer<?, ?>> servers = PipelineLoader.load(json);
+        servers.forEach(s -> new Thread(s).start());
+        for (int i = 1; i <= 3; i++) {
+            try (Socket s = new Socket("localhost", 5001);
+                 ObjectOutputStream out = new ObjectOutputStream(s.getOutputStream())) {
 
-        pipeline.start();
-
-        input.send(new Document("txt","Doc ONE. Hello", List.of()));
-        input.send(new Document("txt","Doc TWO. World", List.of()));
-        input.send(new Document("txt","Doc THREE. Pipeline", List.of()));
-
-        Thread.sleep(2000);
-        pipeline.stop();
-
-        System.out.println("\nFinal results:");
-        while (output.hasData()) {
-            Document d = output.receive();
-            System.out.println(" - " + d.content());
-            System.out.println("   history: " + d.history());
+                out.writeObject(new Document(i, 0,"txt", "Doc " + i, List.of()));
+                out.flush();
+            }
         }
     }
-
-    private static String readResource() throws Exception {
-        URI uri = Objects.requireNonNull(Main.class.getClassLoader().getResource("schema.json")).toURI();
-        return Files.readString(Path.of(uri));
-    }
 }
+
 
 
 

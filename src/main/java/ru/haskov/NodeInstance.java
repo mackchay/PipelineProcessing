@@ -1,5 +1,7 @@
 package ru.haskov;
 
+import ru.haskov.nodes.Node;
+
 import java.util.ArrayList;
 import java.util.List;
 
