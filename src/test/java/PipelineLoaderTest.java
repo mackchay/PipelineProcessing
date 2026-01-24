@@ -1,5 +1,3 @@
-package tests;
-
 import org.junit.jupiter.api.Test;
 import ru.haskov.NodeServer;
 import ru.haskov.PipelineLoader;

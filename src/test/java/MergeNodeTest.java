@@ -1,5 +1,3 @@
-package tests;
-
 import org.junit.jupiter.api.Test;
 import ru.haskov.Document;
 import ru.haskov.nodes.MergeNode;
