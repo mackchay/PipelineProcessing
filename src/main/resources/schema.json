@@ -1,22 +1,30 @@
 {
   "dataType": "Document",
-  "channels": [
-    {"id": "c1"},
-    {"id": "c2"},
-    {"id": "c3"}
-  ],
   "nodes": [
     {
       "id": "normalize",
       "type": "NormalizeNode",
-      "inputs": ["c1"],
-      "outputs": ["c2"]
+      "listenPort": 5001,
+      "targets": [5002]
     },
     {
       "id": "split",
       "type": "SplitNode",
-      "inputs": ["c2"],
-      "outputs": ["c3"]
+      "listenPort": 5002,
+      "targets": [5003]
+    },
+    {
+      "id": "merge",
+      "type": "MergeNode",
+      "listenPort": 5003,
+      "targets": [5004],
+      "expectedParts": 3
+    },
+    {
+      "id": "sink",
+      "type": "SinkNode",
+      "listenPort": 5004,
+      "targets": []
     }
   ]
 }
