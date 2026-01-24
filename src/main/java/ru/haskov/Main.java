@@ -21,7 +21,7 @@ public class Main {
             try (Socket s = new Socket("localhost", 5001);
                  ObjectOutputStream out = new ObjectOutputStream(s.getOutputStream())) {
 
-                out.writeObject(new Document(i, 0,"txt", "Doc " + i, List.of()));
+                out.writeObject(new Document("txt", "THis is doc " + i, List.of()));
                 out.flush();
             }
         }

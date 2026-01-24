@@ -17,14 +17,14 @@
       "id": "merge",
       "type": "MergeNode",
       "listenPort": 5003,
-      "targets": [5004]
+      "targets": [5004],
+      "expectedParts": 3
     },
     {
       "id": "sink",
       "type": "SinkNode",
       "listenPort": 5004,
-      "targets": [],
-      "expectedParts": 3
+      "targets": []
     }
   ]
 }

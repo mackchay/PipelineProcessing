@@ -27,6 +27,11 @@ public class NodeServer<I, O> implements Runnable {
         running = false;
     }
 
+    public Node<I, O> getNode() {
+        return node;
+    }
+
+
     @Override
     public void run() {
         try (ServerSocket server = new ServerSocket(listenPort)) {

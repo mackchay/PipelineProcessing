@@ -7,46 +7,37 @@ import java.util.stream.Collectors;
 
 public final class MergeNode implements Node<Document, Document> {
 
-    private final int expectedParts;
-    private final Map<Long, List<Document>> buffer = new HashMap<>();
+    private final int batchSize;
+    private final List<Document> buffer = new ArrayList<>();
 
-    public MergeNode(int expectedParts) {
-        this.expectedParts = expectedParts;
+    public MergeNode(int batchSize) {
+        this.batchSize = batchSize;
     }
 
     @Override
     public synchronized Document process(Document d) {
-        long groupId = d.mergeGroupId();
+        buffer.add(d);
 
-        buffer.computeIfAbsent(groupId, k -> new ArrayList<>()).add(d);
-
-        List<Document> group = buffer.get(groupId);
-
-        if (group.size() < expectedParts) {
-            System.out.println("MergeNode waiting for group " + groupId + " (" + group.size() + "/" + expectedParts + ")");
+        if (buffer.size() < batchSize) {
             return null;
         }
-        buffer.remove(groupId);
 
-        String mergedContent = group.stream()
+        List<Document> batch = new ArrayList<>(buffer);
+        buffer.clear();
+
+        String content = batch.stream()
                 .map(Document::content)
                 .collect(Collectors.joining(" "));
 
-        List<String> mergedHistory = new ArrayList<>();
-        group.forEach(doc -> mergedHistory.addAll(doc.history()));
-        mergedHistory.add("merged");
+        List<String> history = new ArrayList<>();
+        batch.forEach(doc -> history.addAll(doc.history()));
+        history.add("merged");
 
-        Document mergedDoc = new Document(
-                group.get(0).sequenceId(),
-                groupId,
-                group.get(0).type(),
-                mergedContent,
-                mergedHistory
+        return new Document(
+                d.type(),
+                content,
+                history
         );
-
-        //System.out.println("MergeNode completed merge for group " + groupId + ": " + mergedContent);
-
-        return mergedDoc;
     }
 }
 
